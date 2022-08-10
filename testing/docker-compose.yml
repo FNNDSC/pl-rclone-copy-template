@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  openssh-server:
+    image: lscr.io/linuxserver/openssh-server:version-8.8_p1-r1
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - PUBLIC_KEY_DIR=/etc/chrclone-test/pubkeys
+      - SUDO_ACCESS=false
+      - PASSWORD_ACCESS=false
+      - USER_NAME=chrclone-test-user
+    volumes:
+      - server-config:/config
+      - ./ssh/pubkeys:/etc/chrclone-test/pubkeys
+    restart: unless-stopped
+
+volumes:
+  server-config:
