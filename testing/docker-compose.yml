@@ -14,6 +14,8 @@ services:
       - server-config:/config
       - ./ssh/pubkeys:/etc/chrclone-test/pubkeys
     restart: unless-stopped
+    ports:
+      - "2222:2222"
 
 volumes:
   server-config:

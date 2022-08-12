@@ -1,5 +1,8 @@
-test: ssh/pubkeys
+test: ssh/pubkeys ssh/rclone.conf
 	docker compose up -d
+
+ssh/rclone.conf: ssh/id_rsa
+	./create_config.sh < $< > $@
 
 ssh/pubkeys: ssh/id_rsa
 	mkdir -v $@
