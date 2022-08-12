@@ -3,16 +3,4 @@
 .dockerignore
 Dockerfile
 
-*~
-*.DS_Store
-*.egg-info/
-__pycache__/
-
-.docker
-
-.idea/
-.vscode/
-
-examples/
-
-venv/
+testing/

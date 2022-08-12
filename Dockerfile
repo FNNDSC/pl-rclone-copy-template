@@ -1,23 +1,18 @@
-FROM docker.io/python:3.10.5-slim-alpine
-
-ARG PLUGIN_NAME
-ARG RCLONE_CONFIG
-ARG PLUGIN_DESCRIPTION="A ChRIS fs-type plugin wrapper for rclone copy"
-ARG PLUGIN_URL="https://github.com/FNNDSC/pl-rclone-copy-template"
-ARG PLUGIN_AUTHOR="FNNDSC <dev@babyMRI.org>"
-
-LABEL org.opencontainers.image.authors=$PLUGIN_AUTHOR \
-      org.opencontainers.image.url=$PLUGIN_URL \
-      org.opencontainers.image.title=$PLUGIN_NAME \
-      org.opencontainers.image.description=$PLUGIN_DESCRIPTION
-
+FROM rust:1.63.0-alpine3.16 as builder
+ARG CARGO_TERM_COLOR=always
 WORKDIR /usr/local/src/chrclone
-
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
 COPY . .
-ARG extras_require=none
-RUN pip install ".[${extras_require}]"
+RUN cargo build --release
 
-CMD ["chrclone", "--help"]
+FROM docker.io/rclone/rclone:1.59.1
+
+COPY --from=builder /usr/local/src/chrclone/target/release/chrclone /usr/local/bin/chrclone
+
+ARG RCLONE_CONFIG_BASE64
+RUN echo "Writing rclone config from RCLONE_CONFIG_BASE64" \
+    && [ -n "$RCLONE_CONFIG_BASE64" ] \
+    && mkdir -vp /config/rclone \
+    && echo "$RCLONE_CONFIG_BASE64" | base64 -d > /config/rclone/rclone.conf
+
+ENTRYPOINT []
+CMD ["chrclone"]

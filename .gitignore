@@ -1,11 +1,5 @@
-*~
-*.DS_Store
-*.egg-info/
-__pycache__/
+/.idea
 
-.docker
+# Added by cargo
 
-.idea/
-.vscode/
-
-venv/
+/target
