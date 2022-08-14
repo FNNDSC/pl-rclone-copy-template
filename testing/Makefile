@@ -1,19 +1,21 @@
+DOCKER = docker
+DOCKER_COMPOSE = docker compose
+
 test: test-data
 
-
 test-data: image test-server
-	docker compose exec -u root openssh-server \
+	$(DOCKER_COMPOSE) exec -u root openssh-server \
 		sh -c 'mkdir -p /neuro && chmod 777 /neuro'
-	docker run --rm --net=host \
+	$(DOCKER) run --rm --net=host \
 		-v $(PWD)/expected:/data/expected:ro \
 		localhost/fnndsc/pl-rclone:testing \
 		rclone sync -v /data/expected test-ssh-server:/neuro/example_data
 
 test-server: ssh/pubkeys ssh/rclone.conf image
-	docker compose up -d
+	$(DOCKER_COMPOSE) up -d
 
 image: ssh/rclone.conf
-	env DOCKER_BUILDKIT=1 docker build \
+	env DOCKER_BUILDKIT=1 $(DOCKER) build \
 		-t localhost/fnndsc/pl-rclone:testing \
 		--build-arg RCLONE_CONFIG_BASE64="`base64 < $<`" ..
 
@@ -29,7 +31,7 @@ ssh/id_rsa:
 	ssh-keygen -N '' -t rsa -f $@ -C "Key for testing chrclone"
 
 clean:
-	docker compose down -v
+	$(DOCKER_COMPOSE) down -v
 	$(RM) -rv ssh
 
 
