@@ -1,6 +1,8 @@
 DOCKER = docker
 DOCKER_COMPOSE = docker compose
 
+IMAGE_NAME = localhost/fnndsc/pl-rclone:testing
+
 test: test-data
 
 test-data: image test-server
@@ -8,7 +10,7 @@ test-data: image test-server
 		sh -c 'mkdir -p /neuro && chmod 777 /neuro'
 	$(DOCKER) run --rm --net=host \
 		-v $(PWD)/expected:/data/expected:ro \
-		localhost/fnndsc/pl-rclone:testing \
+		$(IMAGE_NAME) \
 		rclone sync -v /data/expected test-ssh-server:/neuro/example_data
 
 test-server: ssh/pubkeys ssh/rclone.conf image
@@ -16,7 +18,7 @@ test-server: ssh/pubkeys ssh/rclone.conf image
 
 image: ssh/rclone.conf
 	env DOCKER_BUILDKIT=1 $(DOCKER) build \
-		-t localhost/fnndsc/pl-rclone:testing \
+		-t $(IMAGE_NAME) \
 		--build-arg RCLONE_CONFIG_BASE64="`base64 < $<`" ..
 
 ssh/rclone.conf: ssh/id_rsa
@@ -32,6 +34,7 @@ ssh/id_rsa:
 
 clean:
 	$(DOCKER_COMPOSE) down -v
+	$(DOCKER) rmi --ignore $(IMAGE_NAME)
 	$(RM) -rv ssh
 
 
