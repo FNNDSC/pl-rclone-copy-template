@@ -34,7 +34,7 @@ ssh/id_rsa:
 
 clean:
 	$(DOCKER_COMPOSE) down -v
-	$(DOCKER) rmi --ignore $(IMAGE_NAME)
+	$(DOCKER) rmi --force $(IMAGE_NAME)
 	$(RM) -rv ssh
 
 
