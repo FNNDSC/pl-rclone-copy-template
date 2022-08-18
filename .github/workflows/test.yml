@@ -9,8 +9,8 @@ on:
     types: [ published ]
 
 jobs:
-  test:
-    name: Test
+  integration-test:
+    name: Integration tests
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
@@ -22,3 +22,22 @@ jobs:
         run: |
           cd testing
           make clean
+  unit-test:
+    name: Unit tests
+    runs-on: ubuntu-22.04
+    env:
+      CARGO_TERM_COLOR: always
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+      - name: Setup rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+      - name: Setup rust cache
+        uses: Swatinem/rust-cache@v1
+      - name: Run tests
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
