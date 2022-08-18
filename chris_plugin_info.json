@@ -1,0 +1,58 @@
+{
+  "CHANGEME": "This is a whitelabel application. Delete this line, then edit the metadata below to your liking before uploading to the ChRIS Store.",
+  "type": "ds",
+  "version": "0.1.0",
+  "title": "Rclone Copy",
+  "authors": "FNNDSC <dev@babyMRI.org>",
+  "category": "Utility",
+  "description": "Copy files to or from servers.",
+  "documentation": "https://github.com/FNNDSC/pl-bulk-rename/raw/master/docker-entrypoint.sh",
+  "license": "MIT",
+  "icon": "",
+  "parameters": [
+    {
+      "name": "filter",
+      "type": "str",
+      "optional": false,
+      "flag": "--filter",
+      "short_flag": "-f",
+      "action": "store",
+      "help": "Input path filter. Paths which do not match this regex are excluded.",
+      "default": null,
+      "ui_exposed": true
+    },
+    {
+      "name": "expression",
+      "type": "str",
+      "optional": false,
+      "flag": "--expression",
+      "short_flag": "-e",
+      "action": "store",
+      "help": "Regular expression to match paths. See https://docs.rs/regex/1.5.5/regex/#syntax",
+      "default": null,
+      "ui_exposed": true
+    },
+    {
+      "name": "replacement",
+      "type": "str",
+      "optional": false,
+      "flag": "--replace",
+      "short_flag": "-r",
+      "action": "store",
+      "help": "Replacement string with capture groups. See https://docs.rs/regex/1.5.5/regex/#grouping-and-flags",
+      "default": null,
+      "ui_exposed": true
+    }
+  ],
+  "selfpath": "/usr/local/bin",
+  "selfexec": "chrclone",
+  "execshell": "/docker-entrypoint.sh",
+  "min_number_of_workers": 1,
+  "max_number_of_workers": 1,
+  "min_memory_limit": "",
+  "max_memory_limit": "",
+  "min_cpu_limit": "",
+  "max_cpu_limit": "",
+  "min_gpu_limit": 0,
+  "max_gpu_limit": 0
+}
