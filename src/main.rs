@@ -1,5 +1,10 @@
+/// WARNING: this code sucks because it expects to be used in the context of _ChRIS_
+/// and not directly by a terminal user.
+///
+/// All error handling is done by `panic!`
 use phf::phf_map;
 use std::env;
+use std::process::{Command, ExitCode};
 
 const IGNORED_ARGS: [&str; 2] = ["--saveinputmeta", "--saveoutputmeta"];
 
@@ -16,6 +21,8 @@ static PARAM_MAP: phf::Map<&'static str, usize> = phf_map! {
     "--filter-from" => 2
 };
 
+const PATH_FLAG: &str = "--path";
+
 #[derive(Debug, PartialEq)]
 enum UsedAs {
     Invalid,
@@ -23,18 +30,85 @@ enum UsedAs {
     Ds(usize, usize),
 }
 
-fn main() {
+enum RcloneWrapper {
+    Real,
+    Mock,
+}
+
+impl RcloneWrapper {
+    fn run(&self, args: &[String]) -> i32 {
+        eprintln!("$> rclone {}", args.join(" "));
+
+        match self {
+            RcloneWrapper::Real => Command::new("rclone")
+                .args(args)
+                .status()
+                .unwrap_or_else(|_| panic!("failed to run `{:?}`", args))
+                .code()
+                .expect("rclone was terminated by signal."),
+            RcloneWrapper::Mock => 0,
+        }
+    }
+
+    fn use_default_remote(&self, path: String) -> String {
+        if path.contains(':') {
+            return path;
+        }
+        format!("{}{}", self.get_first_remote(), path)
+    }
+
+    fn get_first_remote(&self) -> String {
+        let remotes = self.listremotes();
+        let (first_remote, _) = remotes
+            .split_once('\n')
+            .expect("Cannot parse output of `rclone listremotes`");
+        first_remote.to_string()
+    }
+
+    fn listremotes(&self) -> String {
+        match self {
+            RcloneWrapper::Real => {
+                let bytes = Command::new("rclone")
+                    .args(["listremotes"])
+                    .output()
+                    .expect("failed to run `rclone listremotes`")
+                    .stdout;
+                String::from_utf8_lossy(&*bytes).to_string()
+            }
+            RcloneWrapper::Mock => "mock_remote_name:\n".into(),
+        }
+    }
+}
+
+fn main() -> ExitCode {
+    let wrapper = RcloneWrapper::Real;
     let mut args = env::args()
         .filter(|s| !IGNORED_ARGS.contains(&s.as_str()))
         .collect::<Vec<String>>();
+    let remote_path = wrapper.use_default_remote(remove_remote_path(&mut args));
 
     let mode = get_positionals(&args);
-    let remote_path = "todo:/todo/todo/todo".to_string();
     replace_at(&mut args, &mode, remote_path);
-    dbg!(args);
-    // --immutable --verbose
+
+    args.push("--immutable".into());
+    args.push("--verbose".into());
     // can we use --metadata to preserve group read-write permissions?
     // https://rclone.org/docs/#metadata
+
+    args[0] = "copy".into();
+    let rc = wrapper.run(&args[..]);
+    ExitCode::from(rc as u8)
+}
+
+fn remove_remote_path(args: &mut Vec<String>) -> String {
+    for (i, s) in args.iter().enumerate() {
+        if s.as_str() == PATH_FLAG {
+            let value = args.remove(i + 1);
+            args.remove(i);
+            return value;
+        }
+    }
+    panic!("missing {} option", PATH_FLAG)
 }
 
 fn get_positionals(args: &[String]) -> UsedAs {
@@ -80,6 +154,33 @@ mod tests {
     use super::*;
     use rstest::*;
 
+    const MOCK_WRAPPER: RcloneWrapper = RcloneWrapper::Mock;
+
+    #[rstest]
+    #[case("/neuro/my_data", "mock_remote_name:/neuro/my_data")]
+    #[case("storage:/neuro/my_data", "storage:/neuro/my_data")]
+    fn test_use_default_remote(#[case] path: &str, #[case] expected: &str) {
+        let actual = MOCK_WRAPPER.use_default_remote(path.into());
+        assert_eq!(actual, expected.to_string())
+    }
+
+    #[rstest]
+    #[case(
+    vec!["chrclone", "--path", "/neuro/my_data", "/share/incoming", "/share/outgoing"],
+    vec!["chrclone", "/share/incoming", "/share/outgoing"],
+    "/neuro/my_data"
+    )]
+    fn test_remove_remote_path(
+        #[case] cmd: Vec<&str>,
+        #[case] after: Vec<&str>,
+        #[case] expected: &str,
+    ) {
+        let mut args = list_string(cmd);
+        let actual = remove_remote_path(&mut args);
+        assert_eq!(actual, expected);
+        assert_eq!(args, after);
+    }
+
     #[rstest]
     #[case(
     vec!["chrclone", "--ignore-case", "/share/incoming", "/share/outgoing"],
@@ -98,10 +199,7 @@ mod tests {
     UsedAs::Invalid
     )]
     fn test_get_positionals(#[case] data: Vec<&str>, #[case] mode: UsedAs) {
-        assert_eq!(
-            get_positionals(&list_string(data)),
-            mode
-        )
+        assert_eq!(get_positionals(&list_string(data)), mode)
     }
 
     #[rstest]

@@ -3,7 +3,13 @@ DOCKER_COMPOSE = docker compose
 
 IMAGE_NAME = localhost/fnndsc/pl-rclone:testing
 
-test: test-data
+test: test-ds test-fs
+
+test-ds: image test-data
+	./test_ds.sh
+
+test-fs: image test-data
+	./test_fs.sh
 
 test-data: image test-server
 	$(DOCKER_COMPOSE) exec -u root openssh-server \

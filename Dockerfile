@@ -8,7 +8,7 @@ RUN cargo build --release
 
 FROM docker.io/rclone/rclone:1.59.1
 
-COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY ./docker-entrypoint.sh /docker-entrypoint.sh
 COPY --from=builder /usr/local/src/chrclone/target/release/chrclone /usr/local/bin/chrclone
 
 ARG RCLONE_CONFIG_BASE64
