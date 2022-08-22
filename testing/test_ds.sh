@@ -2,7 +2,7 @@
 
 subfolder="$(date +%s)"
 
-docker run --rm --net=host -u $(id -u)$(id -g) \
+docker run --rm --net=host -u "$(id -u):$(id -g)" \
   -v "$PWD/expected:/incoming:ro" \
   localhost/fnndsc/pl-rclone:testing \
   chrclone --path "/neuro/$subfolder" /incoming /tmp
