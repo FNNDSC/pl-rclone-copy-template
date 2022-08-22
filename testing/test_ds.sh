@@ -7,4 +7,4 @@ docker run --rm --net=host -u $(id -u)$(id -g) \
   localhost/fnndsc/pl-rclone:testing \
   chrclone --path "/neuro/$subfolder" /incoming /tmp
 
-docker-compose exec openssh-server diff -rq "/neuro/$subfolder" /neuro/example_data
+docker-compose exec -T openssh-server diff -rq "/neuro/$subfolder" /neuro/example_data
