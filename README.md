@@ -33,7 +33,7 @@ Pass `rclone.conf` as a string of base64-encoded data into the image during buil
 `rclone.conf` must specify at least one remote.
 
 ```shell
-DOCKER_BUILDKIT=1 docker build -t localhost/fnndsc/pl-rclone \
+DOCKER_BUILDKIT=1 docker build -t fnndsc/pl-rclone \
   --build-arg RCLONE_CONFIG_BASE64="$(base64 < testing/ssh/rclone.conf)" .
 ```
 
