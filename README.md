@@ -36,3 +36,11 @@ Pass `rclone.conf` as a string of base64-encoded data into the image during buil
 DOCKER_BUILDKIT=1 docker build -t localhost/fnndsc/pl-rclone \
   --build-arg RCLONE_CONFIG_BASE64="$(base64 < testing/ssh/rclone.conf)" .
 ```
+
+## Troubleshooting ERROR : Failed to save config after 10 tries
+
+https://github.com/rclone/rclone/issues/3655
+
+Rclone sometimes wants to amend the configuration file.
+It is recommended to run `rclone --config ./my_config.conf copy ...`
+once on-the-metal first before building this _ChRIS_ plugin.
