@@ -49,3 +49,24 @@ once on-the-metal first before building this _ChRIS_ plugin.
 
 It is not possible to repeat the `--include`, `exclude`, nor `--filter` flags.
 This is a limitation of the _ChRIS_ specification itself.
+
+## Example SFTP Config with Group Read-Write Permissions
+
+You can change the SFTP server settings to use a different `umask`, which in turn
+affects the permissions of created files. For instance, a `umask 002` means
+created files will be group read-writable.
+Some SFTP servers have `umask 022` configured, meaning owner read-write only.
+In the context of _ChRIS_ this might not be desirable.
+
+```shell
+[e2]
+type = sftp
+host = e2.tch.harvard.edu
+user = chris-fnndsc
+key_pem = -----BEGIN RSA PRIVATE KEY-----\nAAAAAAAAAAA==\n-----END RSA PRIVATE KEY-----\n
+
+md5sum_command = md5sum
+sha1sum_command = sha1sum
+shell_type = unix
+server_command = /usr/libexec/openssh/sftp-server -u 002
+```
