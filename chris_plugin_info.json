@@ -18,11 +18,89 @@
       "short_flag": "--path",
       "action": "store",
       "help": "remote path location",
-      "default": null,
+      "default": "",
+      "ui_exposed": true
+    },
+
+    {
+      "name": "ignore_case",
+      "type": "bool",
+      "optional": true,
+      "flag": "--ignore-case",
+      "short_flag": "--ignore-case",
+      "action": "store_true",
+      "help": "Ignore case in filters (case insensitive)",
+      "default": false,
+      "ui_exposed": true
+    },
+
+    {
+      "name": "ignore_checksum",
+      "type": "bool",
+      "optional": true,
+      "flag": "--ignore-checksum",
+      "short_flag": "--ignore-checksum",
+      "action": "store_true",
+      "help": "Skip post copy check of checksums",
+      "default": false,
       "ui_exposed": true
     },
     {
-      "name": "TODO"
+      "name": "ignore_existing",
+      "type": "bool",
+      "optional": true,
+      "flag": "--ignore-existing",
+      "short_flag": "--ignore-existing",
+      "action": "store_true",
+      "help": "Skip all files that exist on destination",
+      "default": false,
+      "ui_exposed": true
+    },
+
+    {
+      "name": "timeout",
+      "type": "str",
+      "optional": true,
+      "flag": "--timeout",
+      "short_flag": "--timeout",
+      "action": "store",
+      "help": "IO idle timeout (default 5m0s)",
+      "default": "",
+      "ui_exposed": true
+    },
+
+    {
+      "name": "include",
+      "type": "str",
+      "optional": true,
+      "flag": "--include",
+      "short_flag": "--include",
+      "action": "store",
+      "help": "Include files matching pattern",
+      "default": "",
+      "ui_exposed": true
+    },
+    {
+      "name": "exclude",
+      "type": "str",
+      "optional": true,
+      "flag": "--exclude",
+      "short_flag": "--exclude",
+      "action": "store",
+      "help": "Exclude files matching pattern",
+      "default": "",
+      "ui_exposed": true
+    },
+    {
+      "name": "filter",
+      "type": "str",
+      "optional": true,
+      "flag": "--filter",
+      "short_flag": "--filter",
+      "action": "store",
+      "help": "Add a file-filtering rule",
+      "default": "",
+      "ui_exposed": true
     }
   ],
   "selfpath": "/usr/local/bin",

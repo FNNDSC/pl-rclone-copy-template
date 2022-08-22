@@ -44,3 +44,8 @@ https://github.com/rclone/rclone/issues/3655
 Rclone sometimes wants to amend the configuration file.
 It is recommended to run `rclone --config ./my_config.conf copy ...`
 once on-the-metal first before building this _ChRIS_ plugin.
+
+## Limitations on Filtering
+
+It is not possible to repeat the `--include`, `exclude`, nor `--filter` flags.
+This is a limitation of the _ChRIS_ specification itself.
