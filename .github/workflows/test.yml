@@ -37,5 +37,16 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           shared-key: ${{ steps.rust-toolchain.outputs.cachekey }}
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
       - name: Run tests
-        run: cargo test
+        id: test
+        run: cargo llvm-cov --lcov --output-path lcov.info
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./lcov.info
+          fail_ci_if_error: true
+      - name: End test
+        run: '[ "${{ steps.test.outcome }}" = "success" ]'
