@@ -30,14 +30,12 @@ jobs:
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
-      - name: Setup rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          profile: minimal
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        id: rust-toolchain
       - name: Setup rust cache
-        uses: Swatinem/rust-cache@v1
-      - name: Run tests
-        uses: actions-rs/cargo@v1
+        uses: Swatinem/rust-cache@v2
         with:
-          command: test
+          shared-key: ${{ steps.rust-toolchain.outputs.cachekey }}
+      - name: Run tests
+        run: cargo test
