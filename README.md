@@ -1,5 +1,9 @@
 # Rclone Copy ChRIS Plugin _Template_
 
+[![MIT License](https://img.shields.io/github/license/fnndsc/pl-rclone-copy-template)](https://github.com/FNNDSC/pl-rclone-copy-template/blob/main/LICENSE)
+[![CI](https://github.com/FNNDSC/pl-rclone-copy-template/actions/workflows/test.yml/badge.svg)](https://github.com/FNNDSC/pl-rclone-copy-template/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/FNNDSC/pl-rclone-copy-template/graph/badge.svg?token=9DX0QX1CGL)](https://codecov.io/gh/FNNDSC/pl-rclone-copy-template)
+
 This repository provides source code which can be built
 into a _ChRIS_ plugin which uses `rclone copy`
 to either push or retrieve files from a remote.
