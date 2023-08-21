@@ -1,7 +1,7 @@
 {
   "CHANGEME": "This is a whitelabel application. Delete this line, then edit the metadata below to your liking before uploading to the ChRIS Store.",
   "type": "ds",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "title": "Rclone Copy",
   "authors": "FNNDSC <dev@babyMRI.org>",
   "category": "Utility",
@@ -101,6 +101,50 @@
       "help": "Add a file-filtering rule",
       "default": "",
       "ui_exposed": true
+    },
+    {
+      "name": "max_depth",
+      "type": "int",
+      "optional": true,
+      "flag": "--max-depth",
+      "short_flag": "--max-depth",
+      "action": "store",
+      "help": "Maximum depth of directory hierarchy",
+      "default": "",
+      "ui_exposed": true
+    },
+    {
+      "name": "max_size",
+      "type": "str",
+      "optional": true,
+      "flag": "--max-size",
+      "short_flag": "--max-size",
+      "action": "store",
+      "help": "Only transfer files smaller than this in KiB or suffix B|K|M|G|T|P (default off)",
+      "default": "",
+      "ui_exposed": true
+    },
+    {
+      "name": "min_size",
+      "type": "str",
+      "optional": true,
+      "flag": "--min-size",
+      "short_flag": "--min-size",
+      "action": "store",
+      "help": "Only transfer files bigger than this in KiB or suffix B|K|M|G|T|P (default off)",
+      "default": "",
+      "ui_exposed": true
+    },
+    {
+      "name": "error_on_no_transfer",
+      "type": "bool",
+      "optional": true,
+      "flag": "--error-on-no-transfer",
+      "short_flag": "--error-on-no-transfer",
+      "action": "store_true",
+      "help": "Sets exit code 9 if no files are transferred, useful in scripts",
+      "default": false,
+      "ui_exposed": true
     }
   ],
   "selfpath": "/usr/local/bin",
@@ -108,10 +152,10 @@
   "execshell": "/docker-entrypoint.sh",
   "min_number_of_workers": 1,
   "max_number_of_workers": 1,
-  "min_memory_limit": "",
-  "max_memory_limit": "",
-  "min_cpu_limit": "",
-  "max_cpu_limit": "",
+  "min_memory_limit": "200Mi",
+  "max_memory_limit": "4Gi",
+  "min_cpu_limit": "200m",
+  "max_cpu_limit": "4000m",
   "min_gpu_limit": 0,
   "max_gpu_limit": 0
 }

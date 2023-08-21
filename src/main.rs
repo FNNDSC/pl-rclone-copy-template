@@ -8,9 +8,12 @@ use std::process::{Command, ExitCode};
 
 const IGNORED_ARGS: [&str; 2] = ["--saveinputmeta", "--saveoutputmeta"];
 
+/// Parameters of `rclone` accepted by this program and given to `rclone` transparently,
+/// and the number of arguments they consume.
 static PARAM_MAP: phf::Map<&'static str, usize> = phf_map! {
     "--ignore-case" => 1,
     "--ignore-checksum" => 1,
+    "--ignore-errors" => 1,
     "--ignore-existing" => 1,
     "--timeout" => 2,
     "--include" => 2,
@@ -18,7 +21,14 @@ static PARAM_MAP: phf::Map<&'static str, usize> = phf_map! {
     "--filter" => 2,
     "--include-from" => 2,
     "--exclude-from" => 2,
-    "--filter-from" => 2
+    "--filter-from" => 2,
+    "--max-depth" => 2,
+    "--max-size" => 2,
+    "--max-name-length" => 2,
+    "--min-age" => 2,
+    "--min-size" => 2,
+    "--error-on-no-transfer" => 1,
+    "--fast-list" => 1,
 };
 
 const PATH_FLAG: &str = "--path";
