@@ -1,4 +1,4 @@
-FROM rust:1.80.0-alpine3.20 AS builder
+FROM rust:1.84.0-alpine3.21 AS builder
 RUN apk add musl-dev
 ARG CARGO_TERM_COLOR=always
 WORKDIR /usr/local/src/chrclone
@@ -6,7 +6,7 @@ COPY Cargo.toml Cargo.lock ./
 COPY src ./src/
 RUN cargo build --release
 
-FROM docker.io/rclone/rclone:1.67.0
+FROM docker.io/rclone/rclone:1.69.0
 
 COPY ./docker-entrypoint.sh /docker-entrypoint.sh
 COPY --from=builder /usr/local/src/chrclone/target/release/chrclone /usr/local/bin/chrclone
