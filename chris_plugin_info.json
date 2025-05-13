@@ -1,7 +1,7 @@
 {
   "CHANGEME": "This is a whitelabel application. Delete this line, then edit the metadata below to your liking before uploading to the ChRIS Store.",
   "type": "ds",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "title": "Rclone Copy",
   "authors": "FNNDSC <dev@babyMRI.org>",
   "category": "Utility",
@@ -21,7 +21,6 @@
       "default": "",
       "ui_exposed": true
     },
-
     {
       "name": "ignore_case",
       "type": "bool",
@@ -33,7 +32,6 @@
       "default": false,
       "ui_exposed": true
     },
-
     {
       "name": "ignore_checksum",
       "type": "bool",
@@ -56,7 +54,6 @@
       "default": false,
       "ui_exposed": true
     },
-
     {
       "name": "timeout",
       "type": "str",
@@ -68,7 +65,6 @@
       "default": "",
       "ui_exposed": true
     },
-
     {
       "name": "include",
       "type": "str",
@@ -143,6 +139,17 @@
       "short_flag": "--error-on-no-transfer",
       "action": "store_true",
       "help": "Sets exit code 9 if no files are transferred, useful in scripts",
+      "default": false,
+      "ui_exposed": true
+    },
+    {
+      "name": "no_immutable",
+      "type": "bool",
+      "optional": true,
+      "flag": "--no-immutable",
+      "short_flag": "--no-immutable",
+      "action": "store_true",
+      "help": "Allow files to be modified",
       "default": false,
       "ui_exposed": true
     }

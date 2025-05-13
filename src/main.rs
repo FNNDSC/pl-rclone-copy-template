@@ -32,6 +32,7 @@ static PARAM_MAP: phf::Map<&'static str, usize> = phf_map! {
 };
 
 const PATH_FLAG: &str = "--path";
+const NO_IMMUTABLE_FLAG: &str = "--no-immutable";
 
 #[derive(Debug, PartialEq)]
 enum UsedAs {
@@ -99,8 +100,8 @@ fn main() -> ExitCode {
 
     let mode = get_positionals(&args);
     replace_at(&mut args, &mode, remote_path);
+    let mut args = flip_immutable_flag(args);
 
-    args.push("--immutable".into());
     args.push("--verbose".into());
     // can we use --metadata to preserve group read-write permissions?
     // https://rclone.org/docs/#metadata
@@ -158,6 +159,27 @@ fn replace_at(args: &mut Vec<String>, mode: &UsedAs, remote_path: String) {
     }
 }
 
+/// Remove the `--no-immutable` item if present, otherwise add `--immutable`.
+///
+/// `rclone` has a dangerous default behavior which allows files to be overwritten,
+/// which can be disabled by using the `--immutable` option. This app flips the
+/// default behavior, passing `--immutable` to `rclone` unless `--no-immutable`
+/// is specified.
+fn flip_immutable_flag(mut args: Vec<String>) -> Vec<String> {
+    if let Some(i) = args.iter().enumerate().find_map(|(i, a)| {
+        if a == NO_IMMUTABLE_FLAG {
+            Some(i)
+        } else {
+            None
+        }
+    }) {
+        args.remove(i);
+    } else {
+        args.push("--immutable".into());
+    }
+    args
+}
+
 #[cfg(test)]
 mod tests {
 
@@ -189,6 +211,20 @@ mod tests {
         let actual = remove_remote_path(&mut args);
         assert_eq!(actual, expected);
         assert_eq!(args, after);
+    }
+
+    #[rstest]
+    #[case(
+    vec!["chrclone", "--path", "/neuro/my_data", "/share/incoming", "/share/outgoing"],
+    vec!["chrclone", "--path", "/neuro/my_data", "/share/incoming", "/share/outgoing", "--immutable"],
+    )]
+    #[case(
+    vec!["chrclone", "--path", "/neuro/my_data", "--no-immutable", "/share/incoming", "/share/outgoing"],
+    vec!["chrclone", "--path", "/neuro/my_data", "/share/incoming", "/share/outgoing"],
+    )]
+    fn test_flip_immutable_flag(#[case] cmd: Vec<&str>, #[case] expected: Vec<&str>) {
+        let actual = flip_immutable_flag(list_string(cmd));
+        assert_eq!(actual, list_string(expected));
     }
 
     #[rstest]
