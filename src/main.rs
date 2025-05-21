@@ -137,6 +137,10 @@ fn get_next_positional_index(args: &[String], i: usize) -> Option<usize> {
     if i >= args.len() {
         return None;
     }
+    if args[i] == NO_IMMUTABLE_FLAG {
+        // special case
+        return get_next_positional_index(args, i + 1);
+    }
     if let Some(inc) = PARAM_MAP.get(&*args[i]) {
         return get_next_positional_index(args, i + inc);
     }
@@ -235,6 +239,10 @@ mod tests {
     #[case(
     vec!["chrclone", "/share/incoming", "/share/outgoing", "--ignore-case"],
     UsedAs::Ds(1, 2)
+    )]
+    #[case(
+    vec!["chrclone", "--ignore-case", "--no-immutable", "/share/incoming", "/share/outgoing"],
+    UsedAs::Ds(3, 4),
     )]
     #[case(
     vec!["chrclone", "--ignore-case", "/share/outgoing"],
